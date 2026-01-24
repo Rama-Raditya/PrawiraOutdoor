@@ -1,0 +1,84 @@
+import React from 'react';
+import { X, ShoppingCart } from 'lucide-react';
+
+const ProductModal = ({ item, isOpen, onClose, onAddToCart }) => {
+    if (!isOpen || !item) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-auto">
+                <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-gray-800">{item.name}</h2>
+                    <button
+                        onClick={onClose}
+                        className="p-1 rounded-full hover:bg-gray-100"
+                    >
+                        <X size={24} />
+                    </button>
+                </div>
+                
+                <div className="p-4">
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <img 
+                                src={`/storage/${item.image}`} 
+                                alt={item.name} 
+                                className="w-full rounded-lg shadow-md"
+                            />
+                        </div>
+                        
+                        <div>
+                            <div className="mb-4">
+                                <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                                    {item.category.name}
+                                </span>
+                            </div>
+                            
+                            <div className="mb-4">
+                                <span className={`text-lg font-semibold ${
+                                    item.stock < 3 ? 'text-red-500' : 
+                                    item.stock < 10 ? 'text-yellow-500' : 
+                                    'text-green-500'
+                                }`}>
+                                    Stok: {item.stock} item
+                                </span>
+                            </div>
+                            
+                            <div className="mb-6">
+                                <span className="text-2xl font-bold text-deep-green">
+                                    Rp {item.price.toLocaleString('id-ID')}
+                                </span>
+                                <span className="text-gray-500 ml-1">/hari</span>
+                            </div>
+                            
+                            <div className="mb-6">
+                                <h3 className="text-lg font-semibold mb-2">Deskripsi</h3>
+                                <p className="text-gray-600">{item.description}</p>
+                            </div>
+                            
+                            {item.specifications && (
+                                <div className="mb-6">
+                                    <h3 className="text-lg font-semibold mb-2">Spesifikasi</h3>
+                                    <p className="text-gray-600">{item.specifications}</p>
+                                </div>
+                            )}
+                            
+                            <button
+                                onClick={() => {
+                                    onAddToCart(item);
+                                    onClose();
+                                }}
+                                className="w-full bg-deep-green text-white py-3 px-4 rounded-md flex items-center justify-center hover:bg-opacity-90 transition-colors"
+                            >
+                                <ShoppingCart size={20} className="mr-2" />
+                                Tambah ke Keranjang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ProductModal;

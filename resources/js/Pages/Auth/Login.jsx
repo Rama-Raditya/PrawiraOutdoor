@@ -3,8 +3,8 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -22,79 +22,114 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <div className="min-h-screen flex bg-white">
+            <Head title="Log in - Prawira Outdoor" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
+            {/* Left Side - Image */}
+            <div className="hidden lg:flex w-1/2 bg-deep-green items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center opacity-60"></div>
+                <div className="relative z-10 text-center px-10">
+                    <h2 className="text-4xl font-bold text-white mb-4">Selamat Datang Kembali</h2>
+                    <p className="text-gray-100 text-lg">
+                        Siap untuk petualangan berikutnya? Masuk untuk menyewa peralatan camping terbaik.
+                    </p>
                 </div>
-            )}
+            </div>
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+            {/* Right Side - Form */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 relative">
+                <div className="w-full max-w-md">
+                    <Link href="/" className="absolute top-8 right-8 text-gray-500 hover:text-deep-green flex items-center">
+                        <ArrowLeft size={20} className="mr-1" />
+                        Kembali ke Beranda
+                    </Link>
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
+                    <div className="mb-8">
+                        <div className="h-12 w-12 bg-deep-green rounded-lg flex items-center justify-center mb-4">
+                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h2 className="text-3xl font-bold text-gray-900">Masuk Akun</h2>
+                        <p className="text-gray-500 mt-2">Masukan detail akun anda untuk melanjutkan.</p>
+                    </div>
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
+                    {status && (
+                        <div className="mb-4 text-sm font-medium text-green-600 bg-green-50 p-3 rounded-md">
+                            {status}
+                        </div>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                    <form onSubmit={submit}>
+                        <div>
+                            <InputLabel htmlFor="email" value="Email" className="text-gray-700 font-medium" />
+                            <TextInput
+                                id="email"
+                                type="email"
+                                name="email"
+                                value={data.email}
+                                className="mt-1 block w-full border-gray-300 focus:border-deep-green focus:ring-deep-green rounded-md shadow-sm py-3"
+                                autoComplete="username"
+                                isFocused={true}
+                                onChange={(e) => setData('email', e.target.value)}
+                                placeholder="nama@email.com"
+                            />
+                            <InputError message={errors.email} className="mt-2" />
+                        </div>
+
+                        <div className="mt-6">
+                            <InputLabel htmlFor="password" value="Password" className="text-gray-700 font-medium" />
+                            <TextInput
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={data.password}
+                                className="mt-1 block w-full border-gray-300 focus:border-deep-green focus:ring-deep-green rounded-md shadow-sm py-3"
+                                autoComplete="current-password"
+                                onChange={(e) => setData('password', e.target.value)}
+                                placeholder="••••••••"
+                            />
+                            <InputError message={errors.password} className="mt-2" />
+                        </div>
+
+                        <div className="mt-6 flex items-center justify-between">
+                            <label className="flex items-center">
+                                <Checkbox
+                                    name="remember"
+                                    checked={data.remember}
+                                    onChange={(e) => setData('remember', e.target.checked)}
+                                    className="text-deep-green focus:ring-deep-green"
+                                />
+                                <span className="ms-2 text-sm text-gray-600">Ingat saya</span>
+                            </label>
+
+                            {canResetPassword && (
+                                <Link
+                                    href={route('password.request')}
+                                    className="text-sm text-deep-green hover:text-deep-green/80 font-medium"
+                                >
+                                    Lupa password?
+                                </Link>
+                            )}
+                        </div>
+
+                        <div className="mt-8">
+                            <PrimaryButton className="w-full justify-center py-3 bg-deep-green hover:bg-deep-green/90" disabled={processing}>
+                                Masuk Sekarang
+                            </PrimaryButton>
+                        </div>
+
+                        <div className="mt-6 text-center">
+                            <p className="text-sm text-gray-600">
+                                Belum punya akun?{' '}
+                                <Link href={route('register')} className="font-medium text-deep-green hover:text-deep-green/80">
+                                    Daftar disini
+                                </Link>
+                            </p>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </GuestLayout>
+            </div>
+        </div>
     );
 }
