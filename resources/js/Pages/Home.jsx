@@ -270,7 +270,7 @@ const Home = ({ auth }) => {
                         Siap Untuk Petualangan Anda?
                     </h2>
                     <p className="text-white/90 text-lg mb-8">
-                        Sewa sekarang dan dapatkan diskon 10% untuk penyewaan pertama Anda
+                        Sewa sekarang dan dapatkan alat camping terbaik untuk petualangan Anda
                     </p>
                     <Link 
                         href="/catalog" 

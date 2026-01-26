@@ -4,7 +4,63 @@ import Navbar from '@/Components/Navbar';
 import { ArrowLeft, Upload } from 'lucide-react';
 
 const ItemsCreate = ({ auth, categories }) => {
-    // ... existing hooks
+    const { data, setData, post, processing, errors } = useForm({
+        name: '',
+        description: '',
+        price: '',
+        stock: '',
+        specifications: '',
+        category_id: '',
+        is_available: true,
+        image: null,
+    });
+
+    const [imagePreview, setImagePreview] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post('/admin/items', {
+            forceFormData: true,
+        });
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            setData('image', file);
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setData('image', file);
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
         <>
             <Head title="Tambah Produk - Admin" />
