@@ -22,11 +22,11 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <div className="min-h-screen flex bg-white">
+        <div className="min-h-screen flex flex-col lg:flex-row bg-white">
             <Head title="Log in - Prawira Outdoor" />
 
-            {/* Left Side - Image */}
-            <div className="hidden lg:flex w-1/2 bg-deep-green items-center justify-center relative overflow-hidden">
+            {/* Left Side - Image (Hidden on mobile) */}
+            <div className="hidden lg:flex lg:w-1/2 bg-deep-green items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center opacity-60"></div>
                 <div className="relative z-10 text-center px-10">
                     <h2 className="text-4xl font-bold text-white mb-4">Selamat Datang Kembali</h2>
@@ -37,21 +37,21 @@ export default function Login({ status, canResetPassword }) {
             </div>
 
             {/* Right Side - Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 relative">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 lg:p-16 relative">
                 <div className="w-full max-w-md">
-                    <Link href="/" className="absolute top-8 right-8 text-gray-500 hover:text-deep-green flex items-center">
+                    <Link href="/" className="absolute top-4 sm:top-8 right-4 sm:right-8 text-gray-500 hover:text-deep-green flex items-center text-sm sm:text-base">
                         <ArrowLeft size={20} className="mr-1" />
-                        Kembali ke Beranda
+                        Kembali
                     </Link>
 
-                    <div className="mb-8">
+                    <div className="mb-6 sm:mb-8 mt-8 sm:mt-0">
                         <div className="h-12 w-12 bg-deep-green rounded-lg flex items-center justify-center mb-4">
                             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                             </svg>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900">Masuk Akun</h2>
-                        <p className="text-gray-500 mt-2">Masukan detail akun anda untuk melanjutkan.</p>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Masuk Akun</h2>
+                        <p className="text-gray-500 mt-2 text-sm sm:text-base">Masukan detail akun anda untuk melanjutkan.</p>
                     </div>
 
                     {status && (
@@ -68,7 +68,7 @@ export default function Login({ status, canResetPassword }) {
                                 type="email"
                                 name="email"
                                 value={data.email}
-                                className="mt-1 block w-full border-gray-300 focus:border-deep-green focus:ring-deep-green rounded-md shadow-sm py-3"
+                                className="mt-1 block w-full border-gray-300 focus:border-deep-green focus:ring-deep-green rounded-md shadow-sm py-2.5 sm:py-3 text-sm sm:text-base"
                                 autoComplete="username"
                                 isFocused={true}
                                 onChange={(e) => setData('email', e.target.value)}
@@ -77,14 +77,14 @@ export default function Login({ status, canResetPassword }) {
                             <InputError message={errors.email} className="mt-2" />
                         </div>
 
-                        <div className="mt-6">
+                        <div className="mt-4 sm:mt-6">
                             <InputLabel htmlFor="password" value="Password" className="text-gray-700 font-medium" />
                             <TextInput
                                 id="password"
                                 type="password"
                                 name="password"
                                 value={data.password}
-                                className="mt-1 block w-full border-gray-300 focus:border-deep-green focus:ring-deep-green rounded-md shadow-sm py-3"
+                                className="mt-1 block w-full border-gray-300 focus:border-deep-green focus:ring-deep-green rounded-md shadow-sm py-2.5 sm:py-3 text-sm sm:text-base"
                                 autoComplete="current-password"
                                 onChange={(e) => setData('password', e.target.value)}
                                 placeholder="••••••••"
@@ -92,7 +92,7 @@ export default function Login({ status, canResetPassword }) {
                             <InputError message={errors.password} className="mt-2" />
                         </div>
 
-                        <div className="mt-6 flex items-center justify-between">
+                        <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <label className="flex items-center">
                                 <Checkbox
                                     name="remember"
@@ -113,13 +113,13 @@ export default function Login({ status, canResetPassword }) {
                             )}
                         </div>
 
-                        <div className="mt-8">
-                            <PrimaryButton className="w-full justify-center py-3 bg-deep-green hover:bg-deep-green/90" disabled={processing}>
+                        <div className="mt-6 sm:mt-8">
+                            <PrimaryButton className="w-full justify-center py-2.5 sm:py-3 bg-deep-green hover:bg-deep-green/90 text-sm sm:text-base" disabled={processing}>
                                 Masuk Sekarang
                             </PrimaryButton>
                         </div>
 
-                        <div className="mt-6 text-center">
+                        <div className="mt-4 sm:mt-6 text-center">
                             <p className="text-sm text-gray-600">
                                 Belum punya akun?{' '}
                                 <Link href={route('register')} className="font-medium text-deep-green hover:text-deep-green/80">

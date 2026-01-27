@@ -7,15 +7,15 @@ const ProductCard = ({ item, onAddToCart, onShowDetail }) => {
     const stockColor = stockStatus === 'low' ? 'text-red-500' : stockStatus === 'medium' ? 'text-yellow-500' : 'text-green-500';
 
     return (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 flex flex-col h-full">
             <div
-                className="relative cursor-pointer"
+                className="relative cursor-pointer overflow-hidden"
                 onClick={() => onShowDetail(item)}
             >
                 <img
                     src={`/storage/${item.image}`}
                     alt={item.name}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-40 xs:h-48 sm:h-48 object-cover hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute top-2 right-2 bg-white bg-opacity-90 px-2 py-1 rounded-full">
                     <span className={`text-xs font-semibold ${stockColor}`}>
@@ -24,7 +24,7 @@ const ProductCard = ({ item, onAddToCart, onShowDetail }) => {
                 </div>
             </div>
 
-            <div className="p-4">
+            <div className="p-3 sm:p-4 flex flex-col flex-grow">
                 <div className="mb-2">
                     <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                         {item.category.name}
@@ -32,32 +32,34 @@ const ProductCard = ({ item, onAddToCart, onShowDetail }) => {
                 </div>
 
                 <h3
-                    className="text-lg font-semibold text-gray-800 mb-2 cursor-pointer hover:text-deep-green transition-colors"
+                    className="text-sm sm:text-base lg:text-lg font-semibold text-gray-800 mb-2 cursor-pointer hover:text-deep-green transition-colors line-clamp-2"
                     onClick={() => onShowDetail(item)}
                 >
                     {item.name}
                 </h3>
 
                 <p
-                    className="text-gray-600 text-sm mb-3 line-clamp-2 cursor-pointer"
+                    className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2 cursor-pointer flex-grow"
                     onClick={() => onShowDetail(item)}
                 >
                     {item.description}
                 </p>
 
                 <div className="flex items-center justify-between mb-3">
-                    <span className="text-xl font-bold text-deep-green">
-                        Rp {item.price.toLocaleString('id-ID')}
-                    </span>
-                    <span className="text-sm text-gray-500">/hari</span>
+                    <div>
+                        <span className="text-base sm:text-lg lg:text-xl font-bold text-deep-green">
+                            Rp {item.price.toLocaleString('id-ID')}
+                        </span>
+                        <span className="text-xs sm:text-sm text-gray-500 ml-1">/hari</span>
+                    </div>
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-auto">
                     <button
                         onClick={() => onAddToCart(item)}
-                        className="w-full bg-deep-green text-white py-2 px-3 rounded-md flex items-center justify-center hover:bg-opacity-90 transition-colors"
+                        className="w-full bg-deep-green text-white py-2 px-3 rounded-md flex items-center justify-center hover:bg-opacity-90 transition-colors text-xs sm:text-sm"
                     >
-                        <ShoppingCart size={18} className="mr-2" />
+                        <ShoppingCart size={16} className="mr-2" />
                         Tambah Keranjang
                     </button>
                 </div>

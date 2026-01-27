@@ -18,22 +18,12 @@ export default {
             colors: {
                 'deep-green': '#1B4332',
                 'sand': '#D4A574',
-                'dark-charcoal': '#2D2D2D',
+                'dark-charcoal': '#2D3142',
             },
-            animation: {
-                'float': 'float 3s ease-in-out infinite',
-                'scroll': 'scroll 1.5s ease-in-out infinite',
+            screens: {
+                'xs': '475px',
+                ...defaultTheme.screens,
             },
-            keyframes: {
-                float: {
-                    '0%, 100%': { transform: 'translateY(0px)' },
-                    '50%': { transform: 'translateY(-20px)' },
-                },
-                scroll: {
-                    '0%': { transform: 'translateY(0)' },
-                    '100%': { transform: 'translateY(10px)' },
-                }
-            }
         },
     },
 

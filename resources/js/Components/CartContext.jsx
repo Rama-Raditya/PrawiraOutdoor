@@ -106,7 +106,7 @@ export const CartProvider = ({ children }) => {
         message += `Mohon informasikan ketersediaan barang dan proses selanjutnya.\nTerima kasih!`;
 
         // Open WhatsApp with the formatted message
-        const phoneNumber = '6282143421139'; // Replace with your WhatsApp number
+        const phoneNumber = '6282143421139'; // number
         const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
 
