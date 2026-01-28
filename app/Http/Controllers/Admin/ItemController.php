@@ -41,8 +41,18 @@ class ItemController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('items', 'public');
+            $image = $request->file('image');
+            
+            // Store in public storage
+            $imagePath = $image->store('items', 'public');
             $validated['image'] = $imagePath;
+            
+            // Also store in database as base64
+            $imageData = base64_encode(file_get_contents($image->getRealPath()));
+            $validated['image_data'] = $imageData;
+            
+            // Additionally, copy to git-tracked directory for version control
+            $this->storeImageInGit($image, $imagePath);
         }
 
         $validated['slug'] = Str::slug($validated['name']);
@@ -83,13 +93,28 @@ class ItemController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Delete old image
+            // Delete old image from public storage
             if ($item->image) {
                 Storage::disk('public')->delete($item->image);
             }
+            
+            // Delete old image from git directory
+            if ($item->image) {
+                $this->deleteImageFromGit($item->image);
+            }
 
-            $imagePath = $request->file('image')->store('items', 'public');
+            $image = $request->file('image');
+            
+            // Store in public storage
+            $imagePath = $image->store('items', 'public');
             $validated['image'] = $imagePath;
+            
+            // Store in database as base64
+            $imageData = base64_encode(file_get_contents($image->getRealPath()));
+            $validated['image_data'] = $imageData;
+            
+            // Store in git-tracked directory
+            $this->storeImageInGit($image, $imagePath);
         }
 
         $validated['slug'] = Str::slug($validated['name']);
@@ -102,14 +127,49 @@ class ItemController extends Controller
 
     public function destroy(Item $item)
     {
-        // Delete image
+        // Delete image from public storage
         if ($item->image) {
             Storage::disk('public')->delete($item->image);
+        }
+        
+        // Delete image from git directory
+        if ($item->image) {
+            $this->deleteImageFromGit($item->image);
         }
 
         $item->delete();
 
         return redirect()->route('admin.items.index')
             ->with('success', 'Item berhasil dihapus!');
+    }
+    
+    /**
+     * Store image in git-tracked directory for version control
+     */
+    private function storeImageInGit($image, $imagePath)
+    {
+        // Create directory if not exists
+        $gitStorageDir = storage_path('app/git-images/items');
+        if (!file_exists($gitStorageDir)) {
+            mkdir($gitStorageDir, 0755, true);
+        }
+        
+        // Copy image to git-tracked directory
+        $filename = basename($imagePath);
+        $destinationPath = $gitStorageDir . '/' . $filename;
+        copy($image->getRealPath(), $destinationPath);
+    }
+    
+    /**
+     * Delete image from git-tracked directory
+     */
+    private function deleteImageFromGit($imagePath)
+    {
+        $filename = basename($imagePath);
+        $gitImagePath = storage_path('app/git-images/items/' . $filename);
+        
+        if (file_exists($gitImagePath)) {
+            unlink($gitImagePath);
+        }
     }
 }

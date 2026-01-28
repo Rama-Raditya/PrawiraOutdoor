@@ -16,7 +16,7 @@ export default {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                'deep-green': '#1B4332',
+                'deep-green': '#fe6f0f',
                 'sand': '#D4A574',
                 'dark-charcoal': '#2D3142',
             },

@@ -15,6 +15,7 @@ class Item extends Model
         'slug',
         'description',
         'image',
+        'image_data',
         'price',
         'stock',
         'specifications',
@@ -40,5 +41,16 @@ class Item extends Model
             return 'medium';
         }
         return 'high';
+    }
+    
+    /**
+     * Get image URL - prioritize database image if available
+     */
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->image_data) {
+            return 'data:image/jpeg;base64,' . $this->image_data;
+        }
+        return $this->image ? '/storage/' . $this->image : '';
     }
 }

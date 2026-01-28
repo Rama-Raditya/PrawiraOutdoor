@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import Navbar from '@/Components/Navbar';
-import { MapPin, Phone, Mail, Clock, Star, Shield, Truck } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Star, Shield, Package, DollarSign } from 'lucide-react';
 
 const Home = ({ auth }) => {
     const [activeTestimonial, setActiveTestimonial] = useState(0);
     const [scrollY, setScrollY] = useState(0);
     const [autoSlide, setAutoSlide] = useState(true);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const heroRef = useRef(null);
     const featuresRef = useRef(null);
     const aboutRef = useRef(null);
     const testimonialsRef = useRef(null);
+    const ctaRef = useRef(null);
     const [visibleSections, setVisibleSections] = useState({
         features: false,
         about: false,
@@ -21,40 +21,65 @@ const Home = ({ auth }) => {
         cta: false
     });
 
-    // Parallax scroll effect
+    // Optimized visibility detection using IntersectionObserver
     useEffect(() => {
+        const observerOptions = {
+            root: null,
+            threshold: 0.1
+        };
+
+        const handleIntersect = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const section = entry.target.getAttribute('data-section');
+                    if (section) {
+                        setVisibleSections(prev => ({ ...prev, [section]: true }));
+                    }
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(handleIntersect, observerOptions);
+
+        const sections = [
+            { ref: featuresRef, id: 'features' },
+            { ref: aboutRef, id: 'about' },
+            { ref: testimonialsRef, id: 'testimonials' },
+            { ref: ctaRef, id: 'cta' }
+        ];
+
+        sections.forEach(s => {
+            if (s.ref.current) {
+                s.ref.current.setAttribute('data-section', s.id);
+                observer.observe(s.ref.current);
+            }
+        });
+
+        const locationEl = document.getElementById('location');
+        if (locationEl) {
+            locationEl.setAttribute('data-section', 'location');
+            observer.observe(locationEl);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    // Optimized scroll effect with throttling
+    useEffect(() => {
+        let ticking = false;
+
         const handleScroll = () => {
-            setScrollY(window.scrollY);
-            
-            // Check which sections are visible
-            const scrollPosition = window.scrollY + window.innerHeight;
-            
-            if (featuresRef.current && scrollPosition > featuresRef.current.offsetTop + 100) {
-                setVisibleSections(prev => ({ ...prev, features: true }));
-            }
-            
-            if (aboutRef.current && scrollPosition > aboutRef.current.offsetTop + 100) {
-                setVisibleSections(prev => ({ ...prev, about: true }));
-            }
-            
-            if (testimonialsRef.current && scrollPosition > testimonialsRef.current.offsetTop + 100) {
-                setVisibleSections(prev => ({ ...prev, testimonials: true }));
-            }
-            
-            if (scrollPosition > document.getElementById('location').offsetTop + 100) {
-                setVisibleSections(prev => ({ ...prev, location: true }));
-            }
-            
-            if (scrollPosition > document.querySelector('[class*="bg-deep-green text-white"]').offsetTop + 100) {
-                setVisibleSections(prev => ({ ...prev, cta: true }));
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    setScrollY(window.scrollY);
+                    ticking = false;
+                });
+                ticking = true;
             }
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        
-        // Trigger once on load
-        handleScroll();
-        
+
         // Set loaded state after a short delay for initial animations
         setTimeout(() => setIsLoaded(true), 100);
 
@@ -63,31 +88,11 @@ const Home = ({ auth }) => {
         };
     }, []);
 
-    // Mouse movement effect for parallax
-    useEffect(() => {
-        const handleMouseMove = (e) => {
-            if (!heroRef.current) return;
-            
-            const { left, top, width, height } = heroRef.current.getBoundingClientRect();
-            const x = (e.clientX - left) / width - 0.5;
-            const y = (e.clientY - top) / height - 0.5;
-            
-            setMousePosition({ x, y });
-        };
-
-        window.addEventListener('mousemove', handleMouseMove);
-        
-        return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-        };
-    }, []);
-
-
     useEffect(() => {
         if (!autoSlide) return;
-        
+
         const interval = setInterval(() => {
-            setActiveTestimonial((prevIndex) => 
+            setActiveTestimonial((prevIndex) =>
                 prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
             );
         }, 3000);
@@ -98,42 +103,42 @@ const Home = ({ auth }) => {
     const testimonials = [
         {
             id: 1,
-            name: "Muda Satria harsono",
+            name: "Muda Satria Harsono",
             rating: 5,
-            comment: "Sangat puas dengan pelayanannya yang ramah harga ramah di kantong bersih bersih pula barangnya makasi boss",
-            avatar: "https://lh3.googleusercontent.com/p/AF1QipNnB2Lr8UNFwg1s97ek8s_Gh2qNd06rvtNW807f=s1360-w1360-h1020-rw"
+            comment: "Sangat puas dengan pelayanannya yang ramah, harga ramah di kantong, bersih bersih pula barangnya. Makasi boss!",
+            avatar: "/images/avatar.png"
         },
         {
             id: 2,
             name: "Dino Ichsandy Hanggara",
             rating: 5,
             comment: "Bagus banget disini untuk persewaan tenda dan alat outdoor, harga sama kualitas gokil parah, alat-alat selalu prima dan juga lengkap, di wa fast respon banget",
-            avatar: "https://lh3.googleusercontent.com/p/AF1QipNnB2Lr8UNFwg1s97ek8s_Gh2qNd06rvtNW807f=s1360-w1360-h1020-rw"
+            avatar: "/images/avatar.png"
         },
         {
             id: 3,
             name: "Rizqi Rinaldi",
             rating: 5,
             comment: "Recomended buat alatnya, sangat komplit dan terjaga kebersihan.",
-            avatar: "https://lh3.googleusercontent.com/p/AF1QipNnB2Lr8UNFwg1s97ek8s_Gh2qNd06rvtNW807f=s1360-w1360-h1020-rw"
+            avatar: "/images/avatar.png"
         }
     ];
 
     const features = [
         {
-            icon: <Shield size={32} className="text-deep-green" />,
+            icon: <Shield size={32} className="text-orange-theme" />,
             title: "Kualitas Terjamin",
             description: "Semua peralatan dalam kondisi baik dan terawat"
         },
         {
-            icon: <Truck size={32} className="text-deep-green" />,
-            title: "Pengiriman Cepat",
-            description: "Proses pengiriman dan pengambilan barang yang efisien"
+            icon: <Package size={32} className="text-orange-theme" />,
+            title: "Peralatan Lengkap",
+            description: "Berbagai macam alat camping tersedia untuk kebutuhan Anda"
         },
         {
-            icon: <Clock size={32} className="text-deep-green" />,
-            title: "Fleksibel",
-            description: "Sewa harian dengan harga terjangkau"
+            icon: <DollarSign size={32} className="text-orange-theme" />,
+            title: "Harga Terjangkau",
+            description: "Sewa harian dengan harga yang bersahabat di kantong"
         }
     ];
 
@@ -150,110 +155,106 @@ const Home = ({ auth }) => {
             <Head title="Prawira Outdoor - Penyewaan Alat Camping" />
             <Navbar user={auth.user} />
 
-            {/* Hero Section with Enhanced Parallax */}
+            {/* Hero Section - Optimized */}
             <section ref={heroRef} className="relative min-h-[60vh] sm:min-h-[70vh] lg:min-screen flex items-center justify-center overflow-hidden">
-                {/* Multiple Parallax Background Layers */}
+                {/* Single optimized background with fixed attachment */}
                 <div
-                    className="absolute inset-0 bg-cover bg-center"
+                    className="absolute inset-0 bg-cover bg-center bg-fixed"
                     style={{
                         backgroundImage: "url('https://picsum.photos/seed/camping/1920/1080.jpg')",
-                        transform: `translateY(${scrollY * 0.5}px) translateX(${mousePosition.x * 20}px)`,
-                        willChange: 'transform'
+                        transform: `translateY(${scrollY * 0.3}px)`,
                     }}
                 ></div>
+
+                {/* Dark overlay untuk meningkatkan keterbacaan teks */}
+                <div className="absolute inset-0 bg-black/40 z-5"></div>
+
+                {/* Orange gradient overlay - lebih soft tapi tetap terlihat */}
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-theme/70 via-orange-theme/50 to-orange-theme/40 z-10"></div>
                 
-                {/* Second parallax layer */}
+                {/* Additional orange layer untuk warna yang lebih kuat */}
+                <div className="absolute inset-0 bg-orange-theme/25 z-10"></div>
+
+                {/* Subtle animated gradient overlay */}
+                <div 
+                    className="absolute inset-0 z-10 opacity-30"
+                    style={{
+                        background: 'linear-gradient(45deg, rgba(254, 111, 15, 0.3) 0%, transparent 50%, rgba(254, 111, 15, 0.2) 100%)',
+                        animation: 'gradient-shift 8s ease infinite',
+                    }}
+                ></div>
+
+                {/* Vignette effect untuk fokus ke tengah */}
+                <div className="absolute inset-0 z-10" style={{
+                    background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.3) 100%)'
+                }}></div>
+
+                {/* Minimal floating elements - reduced for performance */}
                 <div
-                    className="absolute inset-0 bg-cover bg-center opacity-30"
-                    style={{
-                        backgroundImage: "url('https://picsum.photos/seed/mountains/1920/1080.jpg')",
-                        transform: `translateY(${scrollY * 0.3}px) translateX(${mousePosition.x * 10}px)`,
-                        willChange: 'transform'
-                    }}
-                ></div>
-
-                {/* Overlay Gradient with animation */}
-                <div 
-                    className="absolute inset-0 bg-gradient-to-r from-deep-green/80 to-deep-green/60 z-10"
-                    style={{
-                        opacity: isLoaded ? 1 : 0,
-                        transition: 'opacity 1.5s ease-out'
-                    }}
-                ></div>
-
-                {/* Floating elements for depth */}
-                <div 
                     className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl z-5"
                     style={{
-                        transform: `translate(${mousePosition.x * 30}px, ${scrollY * 0.2 + mousePosition.y * 30}px)`,
-                        willChange: 'transform'
-                    }}
-                ></div>
-                <div 
-                    className="absolute bottom-20 right-10 w-32 h-32 bg-sand/10 rounded-full blur-2xl z-5"
-                    style={{
-                        transform: `translate(${mousePosition.x * 20}px, ${scrollY * 0.15 + mousePosition.y * 20}px)`,
-                        willChange: 'transform'
+                        transform: `translate(${scrollY * 0.1}px, ${scrollY * 0.1}px)`,
                     }}
                 ></div>
 
-                {/* Hero Content with enhanced parallax */}
+                {/* Hero Content - Optimized animations */}
                 <div
                     className="relative z-20 text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto py-12"
                     style={{
-                        transform: `translateY(${scrollY * 0.2}px)`,
-                        opacity: Math.max(1 - scrollY / 500, 0),
-                        willChange: 'transform, opacity'
+                        opacity: Math.max(1 - scrollY / 600, 0),
                     }}
                 >
-                    <h1 
+                    <h1
                         className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6"
                         style={{
-                            transform: `translateY(${scrollY * 0.15}px)`,
                             opacity: isLoaded ? 1 : 0,
-                            transition: 'opacity 1s ease-out 0.2s, transform 1s ease-out 0.2s'
+                            transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                            transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+                            textShadow: '0 2px 4px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2), 0 0 20px rgba(254, 111, 15, 0.3)'
                         }}
                     >
                         Jelajahi Alam Bersama Prawira Outdoor
                     </h1>
-                    <p 
-                        className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-white/90"
+                    <p
+                        className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-white font-medium"
                         style={{
-                            transform: `translateY(${scrollY * 0.1}px)`,
                             opacity: isLoaded ? 1 : 0,
-                            transition: 'opacity 1s ease-out 0.4s, transform 1s ease-out 0.4s'
+                            transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                            transition: 'opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s',
+                            textShadow: '0 2px 4px rgba(0,0,0,0.4), 0 4px 8px rgba(0,0,0,0.3)'
                         }}
                     >
                         Sewa alat camping berkualitas dengan harga terjangkau untuk petualangan Anda
                     </p>
-                    <div 
+                    <div
                         className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
                         style={{
                             opacity: isLoaded ? 1 : 0,
-                            transition: 'opacity 1s ease-out 0.6s'
+                            transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                            transition: 'opacity 0.8s ease-out 0.4s, transform 0.8s ease-out 0.4s'
                         }}
                     >
                         <Link
                             href="/catalog"
-                            className="bg-sand text-deep-green px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 text-center shadow-lg hover:shadow-xl"
+                            className="bg-white text-orange-theme px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 text-center shadow-lg hover:shadow-xl"
                         >
                             Lihat Katalog
                         </Link>
                         <a
                             href="#about"
-                            className="border-2 border-white text-white px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-deep-green transition-all text-center shadow-lg hover:shadow-xl"
+                            className="border-2 border-white text-white px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-orange-theme transition-all text-center shadow-lg hover:shadow-xl"
                         >
                             Tentang Kami
                         </a>
                     </div>
                 </div>
 
-                {/* Enhanced Scroll Indicator */}
-                <div 
+                {/* Scroll Indicator */}
+                <div
                     className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 hidden sm:block"
                     style={{
                         opacity: isLoaded ? 1 : 0,
-                        transition: 'opacity 1s ease-out 0.8s'
+                        transition: 'opacity 1s ease-out 0.6s'
                     }}
                 >
                     <div className="w-6 h-10 border-2 border-white rounded-full flex items-start justify-center p-2 animate-bounce">
@@ -262,26 +263,14 @@ const Home = ({ auth }) => {
                 </div>
             </section>
 
-            {/* Features Section with Enhanced Parallax */}
+            {/* Features Section */}
             <section ref={featuresRef} className="py-12 sm:py-16 bg-gray-50 relative overflow-hidden">
-                {/* Decorative Background Elements with enhanced parallax */}
-                <div
-                    className="absolute top-0 right-0 w-64 h-64 bg-deep-green/5 rounded-full blur-3xl"
-                    style={{
-                        transform: `translateY(${scrollY * 0.1}px) translateX(${-mousePosition.x * 15}px)`,
-                        willChange: 'transform'
-                    }}
-                ></div>
-                <div
-                    className="absolute bottom-0 left-0 w-64 h-64 bg-sand/10 rounded-full blur-3xl"
-                    style={{
-                        transform: `translateY(${-scrollY * 0.1}px) translateX(${mousePosition.x * 15}px)`,
-                        willChange: 'transform'
-                    }}
-                ></div>
+                {/* Decorative Background Elements */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-theme/5 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-theme/10 rounded-full blur-3xl"></div>
 
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div 
+                    <div
                         className="text-center mb-8 sm:mb-12"
                         style={{
                             opacity: visibleSections.features ? 1 : 0,
@@ -289,7 +278,7 @@ const Home = ({ auth }) => {
                             transition: 'opacity 0.8s ease-out, transform 0.8s ease-out'
                         }}
                     >
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-deep-green mb-3 sm:mb-4">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-theme mb-3 sm:mb-4">
                             Mengapa Memilih Prawira Outdoor?
                         </h2>
                         <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
@@ -319,21 +308,19 @@ const Home = ({ auth }) => {
                 </div>
             </section>
 
-            {/* About Section with Enhanced Parallax */}
+            {/* About Section */}
             <section ref={aboutRef} id="about" className="py-12 sm:py-16 bg-white relative overflow-hidden">
-                {/* Enhanced Parallax Background Shape */}
+                {/* Background Pattern */}
                 <div
                     className="absolute inset-0 opacity-5"
                     style={{
-                        backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%231B4332\" fill-opacity=\"0.4\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",
-                        transform: `translateX(${scrollY * 0.05 + mousePosition.x * 10}px)`,
-                        willChange: 'transform'
+                        backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23fe6f0f\" fill-opacity=\"0.4\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",
                     }}
                 ></div>
 
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
-                        <div 
+                        <div
                             className="order-2 md:order-1"
                             style={{
                                 opacity: visibleSections.about ? 1 : 0,
@@ -341,7 +328,7 @@ const Home = ({ auth }) => {
                                 transition: 'opacity 0.8s ease-out, transform 0.8s ease-out'
                             }}
                         >
-                            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-deep-green mb-4 sm:mb-6">
+                            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-theme mb-4 sm:mb-6">
                                 Tentang Prawira Outdoor
                             </h2>
                             <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
@@ -352,7 +339,7 @@ const Home = ({ auth }) => {
                             </p>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="flex items-center transform hover:scale-105 transition-transform">
-                                    <div className="bg-deep-green text-white w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0 shadow-lg">
+                                    <div className="bg-orange-theme text-white w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0 shadow-lg">
                                         <span className="font-bold text-sm">100+</span>
                                     </div>
                                     <div>
@@ -360,7 +347,7 @@ const Home = ({ auth }) => {
                                     </div>
                                 </div>
                                 <div className="flex items-center transform hover:scale-105 transition-transform">
-                                    <div className="bg-deep-green text-white w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0 shadow-lg">
+                                    <div className="bg-orange-theme text-white w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0 shadow-lg">
                                         <span className="font-bold text-sm">10+</span>
                                     </div>
                                     <div>
@@ -372,15 +359,13 @@ const Home = ({ auth }) => {
                         <div
                             className="order-1 md:order-2"
                             style={{
-                                transform: `translateY(${scrollY * 0.05}px) translateX(${mousePosition.x * 5}px)`,
                                 opacity: visibleSections.about ? 1 : 0,
                                 transform: visibleSections.about ? 'translateX(0)' : 'translateX(30px)',
-                                transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-                                willChange: 'transform'
+                                transition: 'opacity 0.8s ease-out, transform 0.8s ease-out'
                             }}
                         >
                             <img
-                                src="https://lh3.googleusercontent.com/p/AF1QipNnB2Lr8UNFwg1s97ek8s_Gh2qNd06rvtNW807f=s1360-w1360-h1020-rw"
+                                src="https://picsum.photos/seed/outdoor-gear/600/400.jpg"
                                 alt="Tentang Prawira Outdoor"
                                 className="rounded-lg shadow-xl w-full transform hover:scale-105 transition-transform duration-300"
                             />
@@ -389,18 +374,17 @@ const Home = ({ auth }) => {
                 </div>
             </section>
 
-            {/* Testimonials Section with Enhanced Parallax - FIXED */}
+            {/* Testimonials Section */}
             <section ref={testimonialsRef} className="relative py-16 sm:py-20 lg:py-32 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
                 <div
                     className="absolute inset-0 opacity-5"
                     style={{
-                        transform: `translateY(${scrollY * 0.03}px)`,
-                        backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\" fill=\"%231B4332\" fill-opacity=\"1\" fill-rule=\"evenodd\"/%3E%3C/svg%3E')"
+                        backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\" fill=\"%23fe6f0f\" fill-opacity=\"1\" fill-rule=\"evenodd\"/%3E%3C/svg%3E')"
                     }}
                 />
 
                 <div className="max-w-6xl mx-auto px-4 relative z-10">
-                    <div 
+                    <div
                         className="text-center mb-12 lg:mb-16"
                         style={{
                             opacity: visibleSections.testimonials ? 1 : 0,
@@ -409,7 +393,7 @@ const Home = ({ auth }) => {
                         }}
                     >
                         <Star size={48} className="mx-auto text-yellow-500 mb-4" />
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-deep-green mb-4">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-orange-theme mb-4">
                             Apa Kata Pelanggan Kami
                         </h2>
                         <p className="text-gray-600 max-w-2xl mx-auto text-lg">
@@ -418,26 +402,25 @@ const Home = ({ auth }) => {
                     </div>
 
                     <div className="max-w-4xl mx-auto">
-                        <div 
+                        <div
                             className="bg-white p-8 sm:p-10 lg:p-12 rounded-3xl shadow-2xl relative overflow-hidden mb-8 lg:mb-12"
                             style={{
-                                transform: `translateY(${scrollY * 0.02}px)`,
                                 opacity: visibleSections.testimonials ? 1 : 0,
                                 transition: 'opacity 0.8s ease-out 0.2s'
                             }}
                         >
-                            <div className="absolute top-0 left-0 w-32 h-32 bg-sand/20 rounded-full -ml-16 -mt-16" />
-                            <div className="absolute bottom-0 right-0 w-32 h-32 bg-deep-green/20 rounded-full -mr-16 -mb-16" />
+                            <div className="absolute top-0 left-0 w-32 h-32 bg-orange-theme/20 rounded-full -ml-16 -mt-16" />
+                            <div className="absolute bottom-0 right-0 w-32 h-32 bg-orange-theme/20 rounded-full -mr-16 -mb-16" />
 
                             <div className="relative z-10">
                                 <div className="flex flex-col sm:flex-row items-center sm:items-start mb-6 text-center sm:text-left">
                                     <img
                                         src={testimonials[activeTestimonial].avatar}
                                         alt={testimonials[activeTestimonial].name}
-                                        className="w-20 h-20 rounded-full mb-4 sm:mb-0 sm:mr-6 border-4 border-deep-green/20 shadow-lg"
+                                        className="w-20 h-20 rounded-full mb-4 sm:mb-0 sm:mr-6 border-4 border-orange-theme/20 shadow-lg"
                                     />
                                     <div>
-                                        <h4 className="font-semibold text-xl lg:text-2xl text-deep-green">{testimonials[activeTestimonial].name}</h4>
+                                        <h4 className="font-semibold text-xl lg:text-2xl text-orange-theme">{testimonials[activeTestimonial].name}</h4>
                                         <div className="flex justify-center sm:justify-start mt-2">
                                             {[...Array(5)].map((_, i) => (
                                                 <Star
@@ -452,13 +435,13 @@ const Home = ({ auth }) => {
                                 <p className="text-gray-700 italic text-lg leading-relaxed text-center sm:text-left">
                                     "{testimonials[activeTestimonial].comment}"
                                 </p>
-                                
+
                                 {/* Google Reviews attribution */}
                                 <div className="flex items-center justify-center sm:justify-end mt-6">
                                     <span className="text-sm text-gray-500 mr-2">Review dari</span>
-                                    <img 
-                                        src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" 
-                                        alt="Google" 
+                                    <img
+                                        src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+                                        alt="Google"
                                         className="h-6 w-auto"
                                     />
                                     <span className="text-sm text-gray-500 ml-1 font-medium">Reviews</span>
@@ -466,14 +449,12 @@ const Home = ({ auth }) => {
                             </div>
                         </div>
 
-                        {/* FIXED: Testimonial dots with proper spacing and visibility */}
-                        <div 
+                        {/* Testimonial dots */}
+                        <div
                             className="flex justify-center items-center space-x-3 relative z-20"
                             style={{
                                 opacity: visibleSections.testimonials ? 1 : 0,
-                                transition: 'opacity 0.8s ease-out 0.4s',
-                                marginTop: '0',
-                                paddingTop: '0'
+                                transition: 'opacity 0.8s ease-out 0.4s'
                             }}
                         >
                             {testimonials.map((_, index) => (
@@ -481,8 +462,8 @@ const Home = ({ auth }) => {
                                     key={index}
                                     onClick={() => handleTestimonialSelect(index)}
                                     className={`transition-all duration-300 focus:outline-none ${index === activeTestimonial
-                                            ? 'w-12 h-4 bg-deep-green rounded-full shadow-md'
-                                            : 'w-4 h-4 bg-gray-300 rounded-full hover:bg-gray-400 hover:shadow-md'
+                                        ? 'w-12 h-4 bg-orange-theme rounded-full shadow-md'
+                                        : 'w-4 h-4 bg-gray-300 rounded-full hover:bg-gray-400 hover:shadow-md'
                                         }`}
                                     aria-label={`Go to testimonial ${index + 1}`}
                                 />
@@ -492,25 +473,17 @@ const Home = ({ auth }) => {
                 </div>
             </section>
 
-            {/* Location Section with Parallax */}
-            <section 
-                id="location" 
-                className="py-12 sm:py-16 bg-white"
-                style={{
-                    position: 'relative',
-                    overflow: 'hidden'
-                }}
-            >
+            {/* Location Section */}
+            <section id="location" className="py-12 sm:py-16 bg-white relative overflow-hidden">
                 <div
                     className="absolute inset-0 opacity-5"
                     style={{
                         backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"%239C92AC\" fill-opacity=\"0.4\"%3E%3Cpath d=\"M0 40L40 0H20L0 20M40 40V20L20 40\"/%3E%3C/g%3E%3C/svg%3E')",
-                        transform: `translateY(${scrollY * 0.05}px)`,
                     }}
                 ></div>
-                
+
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div 
+                    <div
                         className="text-center mb-8 sm:mb-12"
                         style={{
                             opacity: visibleSections.location ? 1 : 0,
@@ -518,7 +491,7 @@ const Home = ({ auth }) => {
                             transition: 'opacity 0.8s ease-out, transform 0.8s ease-out'
                         }}
                     >
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-deep-green mb-3 sm:mb-4">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-theme mb-3 sm:mb-4">
                             Kunjungi Kami
                         </h2>
                         <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
@@ -536,7 +509,7 @@ const Home = ({ auth }) => {
                         >
                             <div className="bg-gray-100 p-4 sm:p-6 rounded-lg h-full shadow-md hover:shadow-xl transition-shadow">
                                 <h3 className="text-lg sm:text-xl font-semibold mb-4 flex items-center">
-                                    <MapPin size={24} className="mr-2 text-deep-green flex-shrink-0" />
+                                    <MapPin size={24} className="mr-2 text-orange-theme flex-shrink-0" />
                                     Lokasi Kami
                                 </h3>
                                 <p className="text-sm sm:text-base text-gray-600 mb-4">
@@ -547,22 +520,22 @@ const Home = ({ auth }) => {
 
                                 <div className="space-y-3">
                                     <div className="flex items-center group">
-                                        <Phone size={18} className="mr-3 text-deep-green flex-shrink-0 group-hover:scale-110 transition-transform" />
+                                        <Phone size={18} className="mr-3 text-orange-theme flex-shrink-0 group-hover:scale-110 transition-transform" />
                                         <span className="text-sm sm:text-base">+62 822-2914-3373</span>
                                     </div>
                                     <div className="flex items-center group">
-                                        <Mail size={18} className="mr-3 text-deep-green flex-shrink-0 group-hover:scale-110 transition-transform" />
-                                        <span className="text-sm sm:text-base break-all">info@prawiraoutdoor.com</span>
+                                        <Mail size={18} className="mr-3 text-orange-theme flex-shrink-0 group-hover:scale-110 transition-transform" />
+                                        <span className="text-sm sm:text-base break-all">prawiray813@gmail.com</span>
                                     </div>
                                     <div className="flex items-center group">
-                                        <Clock size={18} className="mr-3 text-deep-green flex-shrink-0 group-hover:scale-110 transition-transform" />
-                                        <span className="text-sm sm:text-base">Senin - Sabtu: 09:00 - 21:00</span>
+                                        <Clock size={18} className="mr-3 text-orange-theme flex-shrink-0 group-hover:scale-110 transition-transform" />
+                                        <span className="text-sm sm:text-base">Senin - Minggu: 09:00 - 21:00</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div 
+                        <div
                             className="h-64 sm:h-80 md:h-full min-h-[300px]"
                             style={{
                                 opacity: visibleSections.location ? 1 : 0,
@@ -586,27 +559,23 @@ const Home = ({ auth }) => {
                 </div>
             </section>
 
-            {/* CTA Section with Enhanced Parallax */}
-            <section 
-                className="py-12 sm:py-16 bg-deep-green text-white opacity-95 relative overflow-hidden h-[400px]"
-                style={{
-                    position: 'relative'
-                }}
+            {/* CTA Section */}
+            <section
+                ref={ctaRef}
+                className="py-12 sm:py-16 bg-orange-theme text-white relative overflow-hidden h-[400px]"
             >
                 <div
-                    className="absolute inset-0 opacity-50"
+                    className="absolute inset-0 opacity-30"
                     style={{
                         backgroundImage: "url('https://images.pexels.com/photos/2741648/pexels-photo-2741648.jpeg')",
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
-                        zIndex: -1,
-                        transform: `translateY(${scrollY * 0.2}px)`,
-                        willChange: 'transform'
+                        zIndex: 0
                     }}
                 ></div>
 
-                <div 
+                <div
                     className="max-w-4xl mx-auto p-8 sm:p-12 lg:p-16 text-center relative z-10"
                     style={{
                         opacity: visibleSections.cta ? 1 : 0,
@@ -622,7 +591,7 @@ const Home = ({ auth }) => {
                     </p>
                     <Link
                         href="/catalog"
-                        className="bg-sand text-deep-green px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 inline-block shadow-xl hover:shadow-2xl"
+                        className="bg-white text-orange-theme px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 inline-block shadow-xl hover:shadow-2xl"
                     >
                         Sewa Sekarang
                     </Link>
@@ -685,6 +654,11 @@ const Home = ({ auth }) => {
             </footer>
 
             <style jsx>{`
+                @keyframes gradient-shift {
+                    0%, 100% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                }
+
                 @keyframes fade-in {
                     from {
                         opacity: 0;
@@ -700,14 +674,6 @@ const Home = ({ auth }) => {
                     animation: fade-in 1s ease-out;
                 }
 
-                .animate-fade-in-delay {
-                    animation: fade-in 1s ease-out 0.2s backwards;
-                }
-
-                .animate-fade-in-delay-2 {
-                    animation: fade-in 1s ease-out 0.4s backwards;
-                }
-
                 @keyframes bounce {
                     0%, 100% {
                         transform: translateY(0);
@@ -719,6 +685,22 @@ const Home = ({ auth }) => {
 
                 .animate-bounce {
                     animation: bounce 2s infinite;
+                }
+
+                :root {
+                    --orange-theme: #fe6f0f;
+                }
+
+                .text-orange-theme {
+                    color: #fe6f0f;
+                }
+
+                .bg-orange-theme {
+                    background-color: #fe6f0f;
+                }
+
+                .border-orange-theme {
+                    border-color: #fe6f0f;
                 }
             `}</style>
         </>
