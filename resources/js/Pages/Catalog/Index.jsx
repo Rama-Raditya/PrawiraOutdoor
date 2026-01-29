@@ -259,4 +259,5 @@ const Catalog = ({ items, categories }) => {
     );
 };
 
+
 export default Catalog;

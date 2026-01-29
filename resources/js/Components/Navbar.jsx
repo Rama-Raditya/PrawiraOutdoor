@@ -15,10 +15,10 @@ const Navbar = ({ user }) => {
     return (
         <nav className="bg-white shadow-md sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-16">
+                <div className="flex justify-between h-20">
                     <div className="flex items-center">
-                        <Link href="/" className="flex-shrink-0 flex items-center">
-                            <span className="text-2xl font-bold text-deep-green">Prawira Outdoor</span>
+                        <Link href="/" className="flex-shrink-0 flex items-center group">
+                            <img src="/images/logo-prawira.png" alt="Prawira Outdoor" className="h-20 w-20 object-contain" />
                         </Link>
                     </div>
 
@@ -148,7 +148,7 @@ const Navbar = ({ user }) => {
                                         <span className="font-medium text-gray-800">{user.name}</span>
                                     </div>
                                 </div>
-                                
+
                                 {user.is_admin && (
                                     <Link
                                         href="/admin/dashboard"
@@ -158,7 +158,7 @@ const Navbar = ({ user }) => {
                                         Dashboard Admin
                                     </Link>
                                 )}
-                                
+
                                 <button
                                     onClick={handleLogout}
                                     className="flex items-center w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-md"

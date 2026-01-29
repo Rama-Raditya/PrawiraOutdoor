@@ -67,7 +67,7 @@ const ProductCard = ({ item, onAddToCart, onShowDetail }) => {
                         className="w-full bg-deep-green text-white py-2 px-3 rounded-md flex items-center justify-center hover:bg-opacity-90 transition-colors text-xs sm:text-sm"
                     >
                         <ShoppingCart size={16} className="mr-2" />
-                        Tambah Keranjang
+                        Tambah Ke Keranjang
                     </button>
                 </div>
             </div>

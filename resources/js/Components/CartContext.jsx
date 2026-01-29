@@ -76,34 +76,32 @@ export const CartProvider = ({ children }) => {
 
     const checkout = (formData) => {
         // Format message for WhatsApp
-        let message = `*Halo Prawira Outdoor!*\n\n`;
-        message += `Saya ingin menyewa beberapa alat camping dengan detail berikut:\n\n`;
+        let message = `Halo Prawira Outdoor,\n\n`;
+        message += `Saya ingin menyewa alat camping dengan data berikut:\n\n`;
 
-        message += `================================\n`;
-        message += `*DATA PEMESAN*\n`;
-        message += `================================\n`;
+        message += `Data Pemesan\n`;
         message += `Nama: ${formData.name}\n`;
         message += `WhatsApp: ${formData.whatsapp}\n`;
         message += `Alamat: ${formData.address}\n`;
-        message += `Pengambilan: ${formData.pickup_date}\n`;
-        message += `Jam: ${formData.pickup_time}\n\n`;
+        message += `Pengambilan: ${formData.pickup_date} pukul ${formData.pickup_time}\n\n`;
 
-        message += `================================\n`;
-        message += `*DETAIL PESANAN*\n`;
-        message += `================================\n\n`;
+        message += `Detail Pesanan\n`;
 
         cartItems.forEach((item, index) => {
-            message += `${index + 1}. *${item.name}*\n`;
-            message += `   Durasi: ${item.quantity} hari\n`;
-            message += `   Harga: Rp ${item.price.toLocaleString('id-ID')}/hari\n`;
-            message += `   Subtotal: Rp ${(item.price * item.quantity).toLocaleString('id-ID')}\n\n`;
+            message += `${index + 1}. ${item.name}\n`;
+            message += `Durasi: ${item.quantity} hari\n`;
+            message += `Harga: Rp ${item.price.toLocaleString('id-ID')} per hari\n`;
+            message += `Subtotal: Rp ${(item.price * item.quantity).toLocaleString('id-ID')}\n\n`;
         });
 
-        message += `================================\n`;
-        message += `*TOTAL: Rp ${getTotalPrice().toLocaleString('id-ID')}*\n`;
-        message += `================================\n\n`;
+        message += `Total: Rp ${getTotalPrice().toLocaleString('id-ID')}\n\n`;
 
-        message += `Mohon informasikan ketersediaan barang dan proses selanjutnya.\nTerima kasih!`;
+        message += `Catatan\n`;
+        message += `Konfirmasi H-2 sebelum pengambilan.\n`;
+        message += `Setelah booking, mohon untuk memastikan.\n\n`;
+
+        message += `Follow IG: @prawiraoutdoorgear\n\n`;
+
 
         // Open WhatsApp with the formatted message
         const phoneNumber = '6282143421139'; // number
