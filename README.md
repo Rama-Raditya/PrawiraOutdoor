@@ -72,4 +72,4 @@
 
 ---
 
-© 2026 Prawira Outdoor. Developed with ❤️ for Outdoor Enthusiasts.
+© 2026 Prawira Outdoor. created by Rama Raditya👨‍💻
