@@ -13,9 +13,16 @@ const ProductCard = ({ item, onAddToCart, onShowDetail }) => {
                 onClick={() => onShowDetail(item)}
             >
                 <img
-                    src={`/storage/${item.image}`}
+                    src={item.image_data
+                        ? `data:image/jpeg;base64,${item.image_data}`
+                        : `/storage/${item.image}`
+                    }
                     alt={item.name}
                     className="w-full h-40 xs:h-48 sm:h-48 object-cover hover:scale-110 transition-transform duration-300"
+                    onError={(e) => {
+                        // Fallback jika gambar tidak ditemukan
+                        e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
+                    }}
                 />
                 <div className="absolute top-2 right-2 bg-white bg-opacity-90 px-2 py-1 rounded-full">
                     <span className={`text-xs font-semibold ${stockColor}`}>

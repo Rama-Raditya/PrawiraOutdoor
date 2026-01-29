@@ -58,8 +58,14 @@ const ItemsIndex = ({ auth, items }) => {
                                                     <div className="flex-shrink-0 h-10 w-10">
                                                         <img
                                                             className="h-10 w-10 rounded-full object-cover"
-                                                            src={`/storage/${item.image}`}
+                                                            src={item.image_data
+                                                                ? `data:image/jpeg;base64,${item.image_data}`
+                                                                : `/storage/${item.image}`
+                                                            }
                                                             alt={item.name}
+                                                            onError={(e) => {
+                                                                e.target.src = 'https://via.placeholder.com/100x100?text=No+Image';
+                                                            }}
                                                         />
                                                     </div>
                                                     <div className="ml-4">
@@ -75,16 +81,16 @@ const ItemsIndex = ({ auth, items }) => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className={`text-sm font-medium ${item.stock < 3 ? 'text-red-500' :
-                                                        item.stock < 10 ? 'text-yellow-500' :
-                                                            'text-green-500'
+                                                    item.stock < 10 ? 'text-yellow-500' :
+                                                        'text-green-500'
                                                     }`}>
                                                     {item.stock}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.is_available
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : 'bg-red-100 text-red-800'
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-red-100 text-red-800'
                                                     }`}>
                                                     {item.is_available ? 'Tersedia' : 'Tidak Tersedia'}
                                                 </span>
@@ -153,8 +159,8 @@ const ItemsIndex = ({ auth, items }) => {
                                                 key={index}
                                                 href={link.url || '#'}
                                                 className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${link.active
-                                                        ? 'z-10 bg-deep-green border-deep-green text-white'
-                                                        : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                                    ? 'z-10 bg-deep-green border-deep-green text-white'
+                                                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                                                     } ${!link.url ? 'cursor-not-allowed' : ''}`}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                             />

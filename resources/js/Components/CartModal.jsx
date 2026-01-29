@@ -34,13 +34,13 @@ const CartModal = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         // Validasi apakah sudah setuju dengan syarat dan ketentuan
         if (!agreedToTerms) {
             alert('Mohon setujui syarat dan ketentuan terlebih dahulu');
             return;
         }
-        
+
         checkout(formData);
         // Reset form dan checkbox
         setFormData({
@@ -147,8 +147,8 @@ const CartModal = () => {
 
                     <div className="bg-gray-50 p-4 rounded-lg mt-6">
                         <p className="text-sm text-gray-700 text-center">
-                            Dengan menyetujui syarat dan ketentuan ini, Anda menyatakan telah membaca, 
-                            memahami, dan menyetujui seluruh isi dari syarat dan ketentuan peminjaman 
+                            Dengan menyetujui syarat dan ketentuan ini, Anda menyatakan telah membaca,
+                            memahami, dan menyetujui seluruh isi dari syarat dan ketentuan peminjaman
                             di Prawira Outdoor.
                         </p>
                     </div>
@@ -202,9 +202,15 @@ const CartModal = () => {
                                         {cartItems.map((item, index) => (
                                             <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
                                                 <img
-                                                    src={`/storage/${item.image}`}
+                                                    src={item.image_data
+                                                        ? `data:image/jpeg;base64,${item.image_data}`
+                                                        : `/storage/${item.image}`
+                                                    }
                                                     alt={item.name}
                                                     className="w-16 h-16 object-cover rounded"
+                                                    onError={(e) => {
+                                                        e.target.src = 'https://via.placeholder.com/100x100?text=No+Image';
+                                                    }}
                                                 />
                                                 <div className="flex-1">
                                                     <h4 className="font-medium text-gray-800">{item.name}</h4>
@@ -338,8 +344,8 @@ const CartModal = () => {
                                                 <div className="text-sm text-yellow-800">
                                                     <p className="font-semibold mb-1">Informasi Penting:</p>
                                                     <ul className="list-disc list-inside space-y-1">
-                                                        <li>DP 50% dibayar saat pengambilan barang</li>
-                                                        <li>Pelunasan saat pengembalian barang</li>
+                                                        <li>DP 50% dibayar saat pemesanan</li>
+                                                        <li>Pelunasan saat pengambilan barang</li>
                                                         <li>Membawa identitas diri (KTP/SIM)</li>
                                                     </ul>
                                                 </div>
@@ -371,11 +377,10 @@ const CartModal = () => {
                                         <button
                                             type="submit"
                                             disabled={!agreedToTerms}
-                                            className={`w-full py-3 px-4 rounded-md transition-colors ${
-                                                agreedToTerms
+                                            className={`w-full py-3 px-4 rounded-md transition-colors ${agreedToTerms
                                                     ? 'bg-deep-green text-white hover:bg-opacity-90'
                                                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            }`}
+                                                }`}
                                         >
                                             {agreedToTerms ? 'Checkout via WhatsApp' : 'Setujui Syarat & Ketentuan untuk Checkout'}
                                         </button>

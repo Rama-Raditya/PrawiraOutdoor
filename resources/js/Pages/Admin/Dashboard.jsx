@@ -1,10 +1,10 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import Navbar from '@/Components/Navbar';
-import { 
-    Package, 
-    ShoppingCart, 
-    TrendingUp, 
+import {
+    Package,
+    ShoppingCart,
+    TrendingUp,
     AlertTriangle,
     FolderOpen,
     Eye,
@@ -117,21 +117,27 @@ const Dashboard = ({ auth, stats, lowStockProducts, recentProducts, categoryStat
                                     <AlertTriangle size={24} className="mr-2 text-yellow-600" />
                                     Produk Stok Rendah
                                 </h2>
-                                <Link 
-                                    href="/admin/items" 
+                                <Link
+                                    href="/admin/items"
                                     className="text-sm text-deep-green hover:underline"
                                 >
                                     Lihat Semua
                                 </Link>
                             </div>
-                            
+
                             {lowStockProducts.length > 0 ? (
                                 <div className="space-y-3">
                                     {lowStockProducts.map((item) => (
                                         <div key={item.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                             <div className="flex items-center space-x-4">
                                                 <img
-                                                    src={`/storage/${item.image}`}
+                                                    src={item.image_data
+                                                        ? `data:image/jpeg;base64,${item.image_data}`
+                                                        : `/storage/${item.image}`
+                                                    }
+                                                    onError={(e) => {
+                                                        e.target.src = 'https://via.placeholder.com/150x150?text=No+Image';
+                                                    }}
                                                     alt={item.name}
                                                     className="w-16 h-16 object-cover rounded-lg"
                                                 />
@@ -199,21 +205,27 @@ const Dashboard = ({ auth, stats, lowStockProducts, recentProducts, categoryStat
                         <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl font-semibold text-gray-800">Produk Terbaru</h2>
-                                <Link 
-                                    href="/admin/items" 
+                                <Link
+                                    href="/admin/items"
                                     className="text-sm text-deep-green hover:underline"
                                 >
                                     Lihat Semua
                                 </Link>
                             </div>
-                            
+
                             {recentProducts.length > 0 ? (
                                 <div className="space-y-3">
                                     {recentProducts.map((item) => (
                                         <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                             <div className="flex items-center space-x-3">
                                                 <img
-                                                    src={`/storage/${item.image}`}
+                                                    src={item.image_data
+                                                        ? `data:image/jpeg;base64,${item.image_data}`
+                                                        : `/storage/${item.image}`
+                                                    }
+                                                    onError={(e) => {
+                                                        e.target.src = 'https://via.placeholder.com/150x150?text=No+Image';
+                                                    }}
                                                     alt={item.name}
                                                     className="w-12 h-12 object-cover rounded-lg"
                                                 />

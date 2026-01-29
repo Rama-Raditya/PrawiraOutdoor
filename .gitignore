@@ -22,3 +22,7 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+# IMPORTANT: Don't ignore git-images directory
+# This allows images to be version controlled
+!/storage/app/git-images
+!/storage/app/git-images/**

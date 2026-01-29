@@ -43,15 +43,15 @@ class ItemController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             
-            // Store in public storage
+            // 1. Store in public storage
             $imagePath = $image->store('items', 'public');
             $validated['image'] = $imagePath;
             
-            // Also store in database as base64
+            // 2. Store in database as base64
             $imageData = base64_encode(file_get_contents($image->getRealPath()));
             $validated['image_data'] = $imageData;
             
-            // Additionally, copy to git-tracked directory for version control
+            // 3. Store in git-tracked directory
             $this->storeImageInGit($image, $imagePath);
         }
 
@@ -105,15 +105,15 @@ class ItemController extends Controller
 
             $image = $request->file('image');
             
-            // Store in public storage
+            // 1. Store in public storage
             $imagePath = $image->store('items', 'public');
             $validated['image'] = $imagePath;
             
-            // Store in database as base64
+            // 2. Store in database as base64
             $imageData = base64_encode(file_get_contents($image->getRealPath()));
             $validated['image_data'] = $imageData;
             
-            // Store in git-tracked directory
+            // 3. Store in git-tracked directory
             $this->storeImageInGit($image, $imagePath);
         }
 

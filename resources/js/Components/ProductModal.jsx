@@ -17,18 +17,24 @@ const ProductModal = ({ item, isOpen, onClose, onAddToCart }) => {
                         <X size={24} />
                     </button>
                 </div>
-                
+
                 <div className="p-4 sm:p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Image Section */}
                         <div>
-                            <img 
-                                src={`/storage/${item.image}`} 
-                                alt={item.name} 
+                            <img
+                                src={item.image_data
+                                    ? `data:image/jpeg;base64,${item.image_data}`
+                                    : `/storage/${item.image}`
+                                }
+                                alt={item.name}
                                 className="w-full rounded-lg shadow-md"
+                                onError={(e) => {
+                                    e.target.src = 'https://via.placeholder.com/800x600?text=No+Image';
+                                }}
                             />
                         </div>
-                        
+
                         {/* Details Section */}
                         <div className="flex flex-col">
                             <div className="mb-4">
@@ -36,36 +42,35 @@ const ProductModal = ({ item, isOpen, onClose, onAddToCart }) => {
                                     {item.category.name}
                                 </span>
                             </div>
-                            
+
                             <div className="mb-4">
-                                <span className={`text-base sm:text-lg font-semibold ${
-                                    item.stock < 3 ? 'text-red-500' : 
-                                    item.stock < 10 ? 'text-yellow-500' : 
-                                    'text-green-500'
-                                }`}>
+                                <span className={`text-base sm:text-lg font-semibold ${item.stock < 3 ? 'text-red-500' :
+                                        item.stock < 10 ? 'text-yellow-500' :
+                                            'text-green-500'
+                                    }`}>
                                     Stok: {item.stock} item
                                 </span>
                             </div>
-                            
+
                             <div className="mb-6">
                                 <span className="text-2xl sm:text-3xl font-bold text-deep-green">
                                     Rp {item.price.toLocaleString('id-ID')}
                                 </span>
                                 <span className="text-gray-500 ml-1 text-sm sm:text-base">/hari</span>
                             </div>
-                            
+
                             <div className="mb-6">
                                 <h3 className="text-base sm:text-lg font-semibold mb-2">Deskripsi</h3>
                                 <p className="text-sm sm:text-base text-gray-600">{item.description}</p>
                             </div>
-                            
+
                             {item.specifications && (
                                 <div className="mb-6">
                                     <h3 className="text-base sm:text-lg font-semibold mb-2">Spesifikasi</h3>
                                     <p className="text-sm sm:text-base text-gray-600">{item.specifications}</p>
                                 </div>
                             )}
-                            
+
                             {/* Add to Cart Button - Sticky on Mobile */}
                             <div className="mt-auto">
                                 <button
