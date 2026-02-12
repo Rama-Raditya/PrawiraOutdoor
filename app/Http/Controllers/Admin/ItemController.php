@@ -115,6 +115,9 @@ class ItemController extends Controller
             
             // 3. Store in git-tracked directory
             $this->storeImageInGit($image, $imagePath);
+        } else {
+            // If no new image is provided, remove 'image' from validated data to preserve existing image
+            unset($validated['image']);
         }
 
         $validated['slug'] = Str::slug($validated['name']);

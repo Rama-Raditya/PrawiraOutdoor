@@ -176,7 +176,7 @@ const ItemsEdit = ({ auth, item, categories }) => {
                                         <p className="mt-1 text-sm text-red-500">{errors.specifications}</p>
                                     )}
                                 </div>
-
+ 
                                 <div>
                                     <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-1">
                                         Kategori
